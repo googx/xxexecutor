@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pbgocmd;
+option go_package = ".;pbgocmd";
+
+option java_generic_services = true;
+option java_multiple_files = true;
+option java_package = "top.googx.command";
+
+import "commandMsg.proto";
+
+message MqttProxyMessage{
+  MessageHead head = 1 ; // 通用消息头
+   string Src = 2 ; // 源地址
+  string Dst = 3 ; // 目的地址
+  bytes Data = 4; // 数据
+}

@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package pbgocmd;
+option go_package = ".;pbgocmd";
+
+option java_generic_services = true;
+option java_multiple_files = true;
+option java_package = "top.googx.command";
+import "google/protobuf/any.proto";
+
+message TestAny {
+  int32 code = 1;
+  google.protobuf.Any data = 2;
+}
+
+// 通用消息头
+message MessageHead {
+  // 消息id
+  string Id = 1;
+
+  // 自定义消息类型
+  int32 MsgTypes = 2;
+
+  // 消息时间, 标准unix时间戳,基于秒单位
+  int64 MsgTime = 3;
+
+  // 消息有效时间,单位: 毫秒,为0则表示不限制,在两台主机时间与ntp服务器同步一致的情况,
+  int64 MsgLiveTime = 4;
+
+  // 调用超时时间,单位: 毫秒,为0则表示不限制,如果消息在多个节点进行转发调用时,该字段为每个节点转发调用的所允许的最大超时时长
+  int32 CallTimeout = 5;
+
+  // Extend字段,数据签名
+  string Sign = 6;
+
+  // 额外控制扩展消息头, 如是否加密, 加密类型,各种id,等信息.
+  map<string, string> Extend = 7;
+}
+
+// 命令列表请求
+message ListCmdRequest {
+  MessageHead CmdHead = 10;
+}
+
+// 命令结构对象
+message Command {
+  string FunctionID = 10;
+  string Name = 20;
+  string Introduce = 30;
+  string ArgsInfo = 40;
+  string ReturnInfo = 50;
+}
+
+message Service {
+  string SrvId = 10;
+  string Name = 20;
+  string Introduce = 30;
+  string Version = 40;
+  string NodeInfo = 50;
+  repeated Command Cmds = 60;
+}
+
+// 命令列表响应体
+message ListCmdResponse {
+  MessageHead CmdHead = 10;
+  repeated Service Services = 20;
+}
+
+// 命令消息
+message CommandRequest {
+  // 通用消息头,多个message共用.
+  MessageHead CmdHead = 10;
+  // 分开传输
+  string ServiceId = 20;
+  string FunctionId = 30;
+  bytes Param = 40; // 请求参数
+  bytes InSecureData = 50; // 未加密的大结构数据包
+  string InSecureInfo = 60; // 未加密的大结构数据包,扩展描述信息
+  // 或者是 整体数据包,字节数组类型
+  //    bytes CmdBody =60;
+}
+
+// 命令结果
+message CommandResponse {
+
+  // 通用消息头,多个message共用.
+  MessageHead CmdHead = 10;
+  int32 Code = 20;
+  string Message = 30;
+  bytes Data = 40;
+  bytes InSecureData = 50;
+  string InSecureInfo = 60; // 未加密的大结构数据包,扩展描述信息
+}
+
+// seq msg
+message SeqMessage {
+  int32 Seq = 10;
+  int64 MsgTime = 20; // 标准unix时间戳,基于秒单位
+}
+
+// ack msg
+message AckMessage {
+  int32 Ack = 10;
+  int64 MsgTime = 20; // 标准unix时间戳,基于秒单位
+}

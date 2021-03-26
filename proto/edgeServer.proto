@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package pbgocmd;
+option go_package = ".;pbgocmd";
+import public "google/protobuf/struct.proto";
+import public "google/protobuf/any.proto";
+
+message NorthProtoMsg{
+  bool  Success = 1;
+  string ErrorMessage = 2;
+  //  bytes Data = 3;
+  google.protobuf.Any Data = 3;
+  //  google.protobuf.Struct Data = 3;
+}
+
+
+
+message TlsConfig{
+  bool enable = 2; // 开启/关闭
+  bool skipVerify = 3; // 基础校验
+  bytes serverCaCert = 4; // 服务端ca证书
+  bytes clientCaCert = 5;
+  bytes clientCert = 6; // 客户端证书
+  bytes clientCertKey = 7; // 客户端key
+}
+
+message EdgeMqttServerDto{
+  string addr = 1; // 主机地址
+  int32 port = 2; // 主机端口
+  string username = 3;
+  string passwd = 4;
+  string cliId = 5;
+  TlsConfig tls = 6;// 证书配置
+}
+
+enum GateWayType{
+  Unknow = 0;
+  MqttGateWay = 1;
+  MqttWebsocketGateWay = 2;
+  GrpcGateWay = 3;
+  TcpGateWay = 4;
+}
+
+message ServerInfo{
+  oneof kind{
+    EdgeMqttServerDto mqttServer = 1;
+  }
+}
+
+//
+message EdgeServerDto{
+  int64 id = 1;
+  GateWayType serverType = 2;
+  bool enable = 3;
+  //  google.protobuf.Struct serverInfo = 4;
+  ServerInfo ServerInfo = 4;
+}
+
+
+message EdgeGaywayOnlineReq{
+  string edgeGaywayId = 1 ;
+  string deviceModel = 2 ;
+  string hardVersion = 3 ;
+  string softVersion = 4 ;
+  repeated string tunnelSupport = 5;
+  int64 notBefore = 6;
+  int64 notAfter = 7;
+}
+
+message EdgeGaywayReq{
+  string edgeGaywayId = 1;
+  string projectId = 2;
+}
+
+service EdgeApiService {
+  // 获取mqtt服务器信息
+  rpc getMqttServers(EdgeMqttServerDto) returns (EdgeMqttServerDto){}
+
+  //  rpc EdgeOnline()
+}

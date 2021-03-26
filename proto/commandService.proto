@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package pbgocmd;
+option go_package = ".;pbgocmd";
+
+option java_generic_services = true;
+option java_multiple_files = true;
+option java_package = "top.googx.command";
+
+import public "commandMsg.proto";
+
+// 命令消息服务
+service CommandService {
+
+  // 链接测试, 发送一个int类型随机数,服务端+1 后返回.
+  rpc TestConn (pbgocmd.SeqMessage) returns (pbgocmd.AckMessage) {
+  }
+
+  //
+  rpc ListCommand (ListCmdRequest) returns (ListCmdResponse) {
+  }
+
+  // 发送一次单向命令
+  rpc Command (CommandRequest) returns (CommandResponse) {
+
+  }
+}
+
+service CommandStreamService{
+
+  // 链接测试, 发送一个int类型随机数,服务端+1 后返回.
+  rpc TestConn (pbgocmd.SeqMessage) returns (pbgocmd.AckMessage) {
+  }
+
+  // 进行长链接双向通讯命令
+  rpc CommandDuplex (stream CommandRequest) returns (stream CommandResponse) {
+  }
+}
