@@ -13,5 +13,4 @@ require (
 	// 1.26版本的grpc和 github.com/golang/protobuf v1.4.3版本的proto-gen-go 不兼容,需要1.27版本的grpc才行,但是1.27版本的grpc和micro框架引用的etcd@v3.3.18不兼容
 	// 所以只能 对 github.com/golang/protobuf 版本降级, 选择v1.3.2的proto-gen-go 版本
 	google.golang.org/grpc v1.26.0
-	google.golang.org/protobuf v1.21.0
 )
